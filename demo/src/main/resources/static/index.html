@@ -1,30 +1,34 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>All Products Dropdown</title>
+    <title>Stock Entry Form</title>
 </head>
 <body>
 
-<h2>Select Product</h2>
+<h2>Stock Entry</h2>
 
 <form id="productForm">
+    <!-- Product Dropdown -->
     <label for="productSelect">Product:</label>
     <select id="productSelect" name="productId" required>
         <option disabled selected>Loading...</option>
     </select><br><br>
 
+    <!-- Total Stock -->
     <label for="totalStock">Total Stock:</label>
     <input type="number" id="totalStock" name="totalStock" required><br><br>
 
+    <!-- Stock Owner -->
     <label for="stockOwner">Stock Owner:</label>
     <input type="text" id="stockOwner" name="stockOwner" required><br><br>
 
+    <!-- Submit Button -->
     <button type="submit">Submit</button>
 </form>
 
+<!-- Script to load products and post stock -->
 <script>
-    // Populate product dropdown
+    // Load products into dropdown on page load
     window.onload = function () {
         fetch("/getAll")
             .then(response => {
@@ -35,7 +39,7 @@
             })
             .then(products => {
                 const dropdown = document.getElementById("productSelect");
-                dropdown.innerHTML = ''; // Clear existing options
+                dropdown.innerHTML = ''; // Clear existing
 
                 products.forEach(product => {
                     const option = document.createElement("option");
@@ -45,24 +49,47 @@
                 });
             })
             .catch(error => {
-                console.error("Error fetching product list:", error);
+                console.error("Error loading products:", error);
                 alert("Failed to load product list.");
             });
     };
 
-    // Optional: Handle form submit
+    // Submit form and save stock
     document.getElementById("productForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent default submit (optional)
+        event.preventDefault(); // Prevent page reload
 
-        const productId = document.getElementById("productSelect").value;
         const totalStock = document.getElementById("totalStock").value;
         const stockOwner = document.getElementById("stockOwner").value;
 
-        console.log("Selected Product ID:", productId);
-        console.log("Total Stock:", totalStock);
-        console.log("Stock Owner:", stockOwner);
+        // Optional: capture selected product ID
+        const selectedProductId = document.getElementById("productSelect").value;
 
-        // You can now send this data to a POST API if needed
+        // Prepare request body (only saving stock fields as per your entity)
+        const stockData = {
+            totalStock: parseInt(totalStock),
+            stockOwner: stockOwner
+            // If needed, you can include productId here
+        };
+
+        fetch("/saveStock", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(stockData)
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Stock saved successfully!");
+                document.getElementById("productForm").reset();
+            } else {
+                alert("Failed to save stock.");
+            }
+        })
+        .catch(error => {
+            console.error("Error saving stock:", error);
+            alert("Something went wrong.");
+        });
     });
 </script>
 
