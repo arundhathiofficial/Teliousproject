@@ -1,40 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Form</title>
+    <title>Product Form</title>
 </head>
 <body>
-<h2>User Form</h2>
+<h2>Product Form</h2>
 
-<form id="userForm">
-    ID:
-    <select id="idDropdown" name="id"></select><br><br>
+<form id="productForm">
+    Select Product ID:
+    <select id="productIdDropdown">
+        <option disabled selected>Select a product</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <!-- Add more IDs manually or generate dynamically if needed -->
+    </select><br><br>
 
-    Name:
-    <select id="nameDropdown" name="name"></select><br><br>
+    Product ID: <input type="text" id="id" name="id" readonly><br><br>
+    Product Name: <input type="text" id="name" name="name"><br><br>
 
     <button type="submit">Submit</button>
 </form>
 
 <script>
-    fetch("/user/all")
-      .then(response => response.json())
-      .then(users => {
-        const idDropdown = document.getElementById("idDropdown");
-        const nameDropdown = document.getElementById("nameDropdown");
-
-        users.forEach(user => {
-          const idOption = document.createElement("option");
-          idOption.value = user.id;
-          idOption.text = user.id;
-          idDropdown.appendChild(idOption);
-
-          const nameOption = document.createElement("option");
-          nameOption.value = user.name;
-          nameOption.text = user.name;
-          nameDropdown.appendChild(nameOption);
+    // On ID selection, call your GET API
+    document.getElementById("productIdDropdown").addEventListener("change", function () {
+      const selectedId = this.value;
+      fetch(`/getProduct/${selectedId}`)
+        .then(response => response.json())
+        .then(product => {
+          document.getElementById("id").value = product.id;
+          document.getElementById("name").value = product.name;
+        })
+        .catch(err => {
+          alert("Error fetching product: " + err);
         });
-      });
+    });
 </script>
 </body>
 </html>
