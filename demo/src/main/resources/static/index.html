@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,14 +10,21 @@
 
 <form id="productForm">
     <label for="productSelect">Product:</label>
-    <select id="productSelect" name="productId">
+    <select id="productSelect" name="productId" required>
         <option disabled selected>Loading...</option>
     </select><br><br>
+
+    <label for="totalStock">Total Stock:</label>
+    <input type="number" id="totalStock" name="totalStock" required><br><br>
+
+    <label for="stockOwner">Stock Owner:</label>
+    <input type="text" id="stockOwner" name="stockOwner" required><br><br>
 
     <button type="submit">Submit</button>
 </form>
 
 <script>
+    // Populate product dropdown
     window.onload = function () {
         fetch("/getAll")
             .then(response => {
@@ -31,8 +39,8 @@
 
                 products.forEach(product => {
                     const option = document.createElement("option");
-                    option.value = product.id;                           // Use ID as value
-                    option.text = product.name;     // Show ID + Name
+                    option.value = product.id;
+                    option.text = `${product.id} - ${product.name}`;
                     dropdown.appendChild(option);
                 });
             })
@@ -41,6 +49,21 @@
                 alert("Failed to load product list.");
             });
     };
+
+    // Optional: Handle form submit
+    document.getElementById("productForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default submit (optional)
+
+        const productId = document.getElementById("productSelect").value;
+        const totalStock = document.getElementById("totalStock").value;
+        const stockOwner = document.getElementById("stockOwner").value;
+
+        console.log("Selected Product ID:", productId);
+        console.log("Total Stock:", totalStock);
+        console.log("Stock Owner:", stockOwner);
+
+        // You can now send this data to a POST API if needed
+    });
 </script>
 
 </body>
