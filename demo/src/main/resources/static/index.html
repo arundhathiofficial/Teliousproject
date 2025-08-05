@@ -1,41 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Product Form</title>
+    <title>All Products Dropdown</title>
 </head>
 <body>
-<h2>Product Form</h2>
+
+<h2>Select Product</h2>
 
 <form id="productForm">
-    Select Product ID:
-    <select id="productIdDropdown">
-        <option disabled selected>Select a product</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <!-- Add more IDs manually or generate dynamically if needed -->
+    <label for="productSelect">Product:</label>
+    <select id="productSelect" name="productId">
+        <option disabled selected>Loading...</option>
     </select><br><br>
-
-    Product ID: <input type="text" id="id" name="id" readonly><br><br>
-    Product Name: <input type="text" id="name" name="name"><br><br>
 
     <button type="submit">Submit</button>
 </form>
 
 <script>
-    // On ID selection, call your GET API
-    document.getElementById("productIdDropdown").addEventListener("change", function () {
-      const selectedId = this.value;
-      fetch(`/getProduct/${selectedId}`)
-        .then(response => response.json())
-        .then(product => {
-          document.getElementById("id").value = product.id;
-          document.getElementById("name").value = product.name;
-        })
-        .catch(err => {
-          alert("Error fetching product: " + err);
-        });
-    });
+    window.onload = function () {
+        fetch("/getAll")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+                return response.json();
+            })
+            .then(products => {
+                const dropdown = document.getElementById("productSelect");
+                dropdown.innerHTML = ''; // Clear existing options
+
+                products.forEach(product => {
+                    const option = document.createElement("option");
+                    option.value = product.id;                           // Use ID as value
+                    option.text = product.name;     // Show ID + Name
+                    dropdown.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching product list:", error);
+                alert("Failed to load product list.");
+            });
+    };
 </script>
+
 </body>
 </html>

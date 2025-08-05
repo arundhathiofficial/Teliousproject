@@ -3,8 +3,9 @@ package com.telious.Controller;
 import com.telious.ProductEntity;
 import com.telious.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ProductController {
@@ -22,4 +23,10 @@ public ProductEntity getProduct(@PathVariable Long id){
     return productService.getProduct(id);
 
 }
+
+@GetMapping("/getAll")
+    public List<ProductEntity> getAllProduct(){
+        return productService.getAllProduct();
+
+    }
 }
