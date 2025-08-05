@@ -14,10 +14,6 @@
         <option disabled selected>Loading...</option>
     </select><br><br>
 
-    <!-- Total Stock -->
-    <label for="totalStock">Total Stock:</label>
-    <input type="number" id="totalStock" name="totalStock" required><br><br>
-
     <!-- Stock Owner -->
     <label for="stockOwner">Stock Owner:</label>
     <input type="text" id="stockOwner" name="stockOwner" required><br><br>
@@ -26,7 +22,6 @@
     <button type="submit">Submit</button>
 </form>
 
-<!-- Script to load products and post stock -->
 <script>
     // Load products into dropdown on page load
     window.onload = function () {
@@ -54,21 +49,17 @@
             });
     };
 
-    // Submit form and save stock
+    // Handle form submit
     document.getElementById("productForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent page reload
+        event.preventDefault(); // Prevent form reload
 
-        const totalStock = document.getElementById("totalStock").value;
+        const selectedProductId = document.getElementById("productSelect").value;
         const stockOwner = document.getElementById("stockOwner").value;
 
-        // Optional: capture selected product ID
-        const selectedProductId = document.getElementById("productSelect").value;
-
-        // Prepare request body (only saving stock fields as per your entity)
+        // Create object with product ID as totalStock
         const stockData = {
-            totalStock: parseInt(totalStock),
+            totalStock: parseInt(selectedProductId), // product ID → totalStock
             stockOwner: stockOwner
-            // If needed, you can include productId here
         };
 
         fetch("/saveStock", {
