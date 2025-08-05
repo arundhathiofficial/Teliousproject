@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="Product_Table")
+@NoArgsConstructor
 public class ProductEntity {
 
 
