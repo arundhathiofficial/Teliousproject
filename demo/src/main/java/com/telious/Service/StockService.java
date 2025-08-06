@@ -5,6 +5,8 @@ import com.telious.StockEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class StockService {
 
@@ -17,5 +19,9 @@ public class StockService {
 
     public StockEntity getStock(Long stockId){
         return stockRepository.findById(stockId).get();
+    }
+
+    public List<StockEntity> getAllStock() {
+        return stockRepository.findAll();
     }
 }

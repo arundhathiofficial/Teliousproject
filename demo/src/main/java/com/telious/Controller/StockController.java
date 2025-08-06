@@ -6,6 +6,8 @@ import com.telious.StockEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class StockController {
 
@@ -20,7 +22,11 @@ public class StockController {
     @GetMapping("/getStock/{stockId}")
     public StockEntity getStock(@PathVariable Long stockId) {
         return stockService.getStock(stockId);
+        }
 
+        @GetMapping("/getAllStocks")
+        public List<StockEntity> getAllStock(){
+            return stockService.getAllStock();
         }
 
 

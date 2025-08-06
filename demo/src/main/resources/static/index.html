@@ -22,67 +22,101 @@
     <button type="submit">Submit</button>
 </form>
 
+<br><br>
+
+<!-- Stock Table -->
+<h3>Stock List</h3>
+<table border="1" id="stockTable">
+    <thead>
+    <tr>
+        <th>Stock ID</th>
+        <th>Total Stock</th>
+        <th>Stock Owner</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Rows will be added here -->
+    </tbody>
+</table>
+
 <script>
-    // Load products into dropdown on page load
-    window.onload = function () {
+    function loadProducts() {
         fetch("/getAll")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("HTTP error " + response.status);
-                }
-                return response.json();
-            })
+            .then(res => res.json())
             .then(products => {
                 const dropdown = document.getElementById("productSelect");
-                dropdown.innerHTML = ''; // Clear existing
-
+                dropdown.innerHTML = '';
                 products.forEach(product => {
                     const option = document.createElement("option");
                     option.value = product.id;
-                    option.text = `${product.id} - ${product.name}`;
+                    option.textContent = `${product.id} - ${product.name}`;
                     dropdown.appendChild(option);
                 });
             })
-            .catch(error => {
-                console.error("Error loading products:", error);
-                alert("Failed to load product list.");
+            .catch(err => {
+                console.error("Error loading products:", err);
+                alert("Failed to load products.");
             });
-    };
+    }
 
-    // Handle form submit
+    function loadStocks() {
+        fetch("/getAllStocks")
+            .then(res => res.json())
+            .then(stocks => {
+                const tbody = document.querySelector("#stockTable tbody");
+                tbody.innerHTML = ''; // Clear table
+                stocks.forEach(stock => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${stock.stockId}</td>
+                        <td>${stock.totalStock}</td>
+                        <td>${stock.stockOwner}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(err => {
+                console.error("Error loading stocks:", err);
+                alert("Failed to load stock data.");
+            });
+    }
+
     document.getElementById("productForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent form reload
+        event.preventDefault();
 
         const selectedProductId = document.getElementById("productSelect").value;
         const stockOwner = document.getElementById("stockOwner").value;
 
-        // Create object with product ID as totalStock
         const stockData = {
-            totalStock: parseInt(selectedProductId), // product ID → totalStock
+            totalStock: parseInt(selectedProductId),
             stockOwner: stockOwner
         };
 
         fetch("/saveStock", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(stockData)
         })
         .then(response => {
             if (response.ok) {
                 alert("Stock saved successfully!");
                 document.getElementById("productForm").reset();
+                loadStocks(); // ✅ Refresh stock table
             } else {
                 alert("Failed to save stock.");
             }
         })
         .catch(error => {
-            console.error("Error saving stock:", error);
-            alert("Something went wrong.");
+            console.error("Save error:", error);
+            alert("Something went wrong while saving.");
         });
     });
-</script>
 
+    // Initial Load
+    window.onload = function () {
+        loadProducts();
+        loadStocks();
+    };
+</script>
 </body>
 </html>
